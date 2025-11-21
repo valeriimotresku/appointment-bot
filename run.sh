@@ -8,4 +8,4 @@ from app.db.session import engine
 Base.metadata.create_all(bind=engine)
 END
 
-uvicorn main:app --host 0.0.0.0 --port $PORT
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
