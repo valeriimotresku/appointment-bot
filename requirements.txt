@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+apscheduler
+python-dotenv
+playwright
+aiohttp
+jinja2
+imapclient 
+pyzmail36
+

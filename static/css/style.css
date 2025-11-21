@@ -1,0 +1,4 @@
+body { font-family: Arial; padding: 30px; max-width: 600px; margin: auto; }
+label { display: block; margin-top: 10px; }
+button { margin-top: 20px; padding: 8px 15px; background: #008cff; color: white; border: none; cursor: pointer; }
+button:hover { background: #006cd6; }

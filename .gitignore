@@ -1,0 +1,104 @@
+# --------------------------------------
+# Python
+# --------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Byte-compiled / optimized / DLL files
+*.pyd
+*.dll
+*.so
+*.dylib
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+.pytest_cache/
+.coverage.*
+/*.cover
+*.log
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# PyTest cache
+.pytest_cache/
+
+# Type checker caches
+.pyright/
+
+# --------------------------------------
+# VS Code
+# --------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# --------------------------------------
+# Environment variables
+# --------------------------------------
+.env
+.env.*
+*.env
+*.ini
+
+# --------------------------------------
+# API / Framework related
+# --------------------------------------
+# Gunicorn
+gunicorn.pid
+
+# FastAPI / Uvicorn / Starlette log files
+*.db
+*.sqlite3
+
+# --------------------------------------
+# OS generated files
+# --------------------------------------
+.DS_Store
+Thumbs.db
+
+# --------------------------------------
+# Local data / temp files
+# --------------------------------------
+*.sqlite
+*.db
+tmp/
+temp/
+logs/
+*.log
+
+# --------------------------------------
+# Jupyter Notebook
+# --------------------------------------
+.ipynb_checkpoints/
+
+# --------------------------------------
+# Pydantic / cache
+# --------------------------------------
+.pydantic_cache/

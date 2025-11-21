@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: appointment-bot
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - EMAIL_FROM=${EMAIL_FROM}
+    volumes:
+      - ./app/db:/app/app/db    # Persist SQLite DB
+      - ./static:/app/static    # Optional: serve static files
+      - ./app/ui:/app/app/ui    # Optional: UI files
+    tty: true
