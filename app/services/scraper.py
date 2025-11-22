@@ -36,6 +36,7 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
             
             date_el = page.locator(".date-list .date .title .header-text:not(.not-available)").first
             text_date = await date_el.inner_text()
+            print(f"First available date: {text_date}, scrapping for {request.email}")
             date = parse_german_date(text_date)
             date_from = datetime.strptime(request.date_from, "%Y-%m-%d").date()
             date_to   = datetime.strptime(request.date_to, "%Y-%m-%d").date()
@@ -61,11 +62,13 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
                             has_text=request.booked_datetime.strftime("%H:%M"))
                     count = await prev_booked_time_el.count()
                     if count > 0:
-                        print("Time was not confirmed in email, book again...")
+                        print(f"Time was not confirmed with email, book again..., scrapping for {request.email}")
                         time_el = prev_booked_time_el
                     else:
+                        print(f"Time must be still booked, scrapping for {request.email}")
                         return
                 if request.booked_datetime and request.booked_datetime.date() < date:
+                        print(f"Earlier date has been already booked, scrapping for {request.email}")
                         return
 
                 # Build the datetime
@@ -109,6 +112,7 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
                 await send_telegram_message(msg)
                 return dt
 
+            print(f"Date is out of range: {text_date}, scrapping for {request.email}")
             return None
     finally:
         if browser:
