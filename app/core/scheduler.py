@@ -2,8 +2,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from app.db.session import SessionLocal
 from app.db.models import WatchRequest
 from app.services.scraper import book_available_datetime
-from app.services.registrar import register_for_slot
-from app.services.notifier import notify_success
 from datetime import datetime
 import asyncio
 
