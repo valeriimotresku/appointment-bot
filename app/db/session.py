@@ -2,18 +2,21 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# default to local path for dev, override in Render with ENV var
-DB_PATH = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+# Get database URL from environment; default to local SQLite
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
-# pool_pre_ping ensures stale connections are handled gracefully
+# Determine connect_args for SQLite only
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
+# Create SQLAlchemy engine
 engine = create_engine(
-    DB_PATH,
-    connect_args={"check_same_thread": False},
-    pool_pre_ping=True
+    DATABASE_URL,
+    connect_args=connect_args,
+    pool_pre_ping=True,  # ensures stale connections are handled gracefully
 )
 
+# Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 # Dependency for FastAPI
 def get_db():
