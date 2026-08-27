@@ -18,19 +18,28 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
     browser = None
     try:
         async with async_playwright() as p:
-            # TODO change to true for production!!!
+            # Change headless to Fasle for testing!!!
             browser = await p.chromium.launch(headless=True)
             page = await browser.new_page()
             await page.goto(BASE)
             # Navigate through the site
             await page.locator(".section-buttons a.button", has_text="Stadt Kempten (Allgäu)").click()
-            await page.locator(".section-buttons a.button", has_text="Aufenthaltstitel").click()
-            await page.locator(".section-buttons a.button", 
+            aufenthaltstitel_arg = False
+            # TODO Strategy etc.
+            if aufenthaltstitel_arg:
+                await page.locator(".section-buttons a.button", has_text="Aufenthaltstitel").click()
+                await page.locator(".section-buttons a.button", 
                                has_text="Ersterteilung Aufenthaltserlaubnis").click()
-            await page.locator(".section-buttons a.button", 
+                await page.locator(".section-buttons a.button", 
                                has_text="Termin in der Ausländerbehörde vereinbaren").click()
-            await page.locator(".section-buttons a.button", 
+                await page.locator(".section-buttons a.button", 
                                has_text="digitales Lichtbild ist").click()
+            wohnsitz_arg = True
+            if wohnsitz_arg:
+                await page.locator(".section-buttons a.button", has_text="Wohnsitz").click()
+                await page.locator(".section-buttons a.button", has_text="Wohnsitz An").click()
+                await page.locator(".section-buttons a.button", 
+                               has_text="Termin in der Ausländerbehörde vereinbaren").click()
             await page.locator(".section-buttons a.button", has_text="Einzelperson").click()
             await page.wait_for_load_state('networkidle')
             
@@ -54,11 +63,11 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
                 # header-text -> date-text -> a -> div.date.one-queue
                 parent_div = date_el.locator("..").locator("..").locator("..") 
                 # Find the last available time in .times-list
-                time_el = parent_div.locator(".times-list .time a").last
+                time_el = parent_div.locator(".times-list .time button").last
 
                 # Find prevoiusly booked time if booking was not confirmed
                 if request.booked_datetime and date == request.booked_datetime.date():
-                    prev_booked_time_el = parent_div.locator(".times-list .time a", 
+                    prev_booked_time_el = parent_div.locator(".times-list .time button", 
                             has_text=request.booked_datetime.strftime("%H:%M"))
                     count = await prev_booked_time_el.count()
                     if count > 0:
