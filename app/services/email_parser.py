@@ -1,56 +1,51 @@
-import os
-import time
 import re
-from imapclient import IMAPClient
-import pyzmail
 
-EMAIL_HOST = os.getenv("EMAIL_USER", "imap.gmx.com")  # or your mail server
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASS = os.getenv("EMAIL_PASS")  # Gmail App Password
+from fastapi import Request
 
-def wait_for_confirmation_code(timeout=60):
-    """
-    Waits for the confirmation email and extracts the code.
-    timeout = max seconds to wait.
-    """
-    end_time = time.time() + timeout
+EXPECTED_SENDER_DOMAIN = "frontdesksuite.com"
+EXPECTED_SUBJECT_PATTERN = r"Bestätigen.*Mail"
 
-    with IMAPClient(EMAIL_HOST) as server:
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.select_folder("INBOX")
 
-        while time.time() < end_time:
-            # Search for unread emails
-            messages = server.search(['UNSEEN'])
-            for msgid, data in server.fetch(messages, ['RFC822']).items():
-                email_message = pyzmail.PyzMessage.factory(data[b'RFC822'])
-                subject = email_message.get_subject()
-                from_email = email_message.get_addresses('from')
+async def parse_confirmation_email(
+    request: Request,
+) -> tuple[str, str] | None:
 
-                # Check sender
-                if not any(addr.lower() == "noreply@frontdesksuite.com" for name, addr in from_email):
-                    continue  # skip this email
+    form = await request.form()
 
-                # Check subject contains "Bestätigen ... Mail"
-                if not re.search(r"Bestätigen.*Mail", subject, re.IGNORECASE):
-                    continue  # skip if subject doesn't match
+    sender = form.get("sender", "")
+    recipient = form.get("recipient", "")
+    subject = form.get("subject", "")
+    body = form.get("body-plain", "")
 
-                # Get text content
-                if email_message.text_part:
-                    body = email_message.text_part.get_payload().decode(email_message.text_part.charset)
-                else:
-                    body = ""
+    print(f"[Email] From: {sender}")
+    print(f"[Email] To: {recipient}")
+    print(f"[Email] Subject: {subject}")
 
-                # Look for code (e.g., 4-digit number)
-                match = re.search(r"\b\d{4}\b", body)
-                if match:
-                    code = match.group(0)
-                    # Mark as seen
-                    server.add_flags(msgid, [IMAPClient.SEEN])
-                    print(f"[Email] Found confirmation code: {code}")
-                    return code
+    sender_domain = sender.rsplit("@", 1)[-1].lower()
 
-            time.sleep(1)  # check every 1 second
+    if not (
+        sender_domain == EXPECTED_SENDER_DOMAIN
+        or sender_domain.endswith("." + EXPECTED_SENDER_DOMAIN)
+    ):
+        print(f"[Email] Ignored sender: {sender}")
+        return None
 
-    print("[Email] Timeout: No confirmation email found.")
-    return None
+    if not re.search(
+        EXPECTED_SUBJECT_PATTERN,
+        subject,
+        re.IGNORECASE,
+    ):
+        print("[Email] Ignored: wrong subject")
+        return None
+
+    match = re.search(r"\b\d{4}\b", body)
+
+    if not match:
+        print("[Email] Confirmation code not found")
+        return None
+
+    code = match.group(0)
+
+    print(f"[Email] Found confirmation code: {code}")
+
+    return recipient.lower(), code

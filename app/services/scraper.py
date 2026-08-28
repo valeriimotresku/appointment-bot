@@ -5,8 +5,11 @@ from app.db.models import WatchRequest
 from playwright.async_api import async_playwright
 
 from app.services.date_parser import parse_german_date
-from app.services.email_parser import wait_for_confirmation_code
 from app.services.telegram_notifier import send_telegram_message
+from app.services.email_waiter import (
+    register_code_waiter,
+    wait_for_code,
+)
 
 BASE = 'https://reservation.frontdesksuite.com/kempten/abh/'
 
@@ -100,20 +103,57 @@ async def book_available_datetime(request: WatchRequest) -> datetime:
                 # Fill birth date
                 await page.fill("#field11756", request.birth_date)
 
+                # Register BEFORE submitting the form
+                code_future = register_code_waiter(request.email)
+
                 # Click submit button
                 await page.click("#submit-btn")
 
                 timestamp = dt.strftime("%Y-%m-%d %H:%M")
                 print(f"Form filled and submitted successfully! DateTime = {timestamp}, email = {request.email}")
                 
-                # # Wait for confirmation email
-                # code = wait_for_confirmation_code(timeout=60)
-                # # fill in code
-                # await page.fill("#code", code)
-                # # submit code
-                # await page.locator("button.mdc-button", has_text="Termin")
-                # # check if confirmed
-                # await page.locator(".confirmed-reservation", has_text="gebucht")
+                # Wait for Mailgun webhook
+                code = await wait_for_code(
+                    request.email,
+                    code_future,
+                    timeout=60,
+                )
+
+                if code is None:
+                    print(
+                        f"Confirmation email was not received "
+                        f"for {request.email}"
+                    )
+                    return dt
+
+                print(f"Received confirmation code: {code}")
+
+                # Fill confirmation code
+                await page.fill("#code", code)
+
+                # Submit confirmation
+                await page.locator(
+                    "button.mdc-button",
+                    has_text="Termin"
+                ).click()
+
+                # Wait/check confirmation
+                await page.locator(
+                    ".confirmed-reservation",
+                    has_text="gebucht"
+                ).wait_for()
+
+                print(
+                    f"Appointment confirmed successfully: "
+                    f"{timestamp}, {request.email}"
+                )
+
+                msg = (
+                    timestamp
+                    + " is successfully booked for "
+                    + request.full_name
+                )
+
                 
                 # send telegram notification
                 msg = (timestamp + " is booked for " + request.full_name + 
