@@ -6,7 +6,5 @@ python-dotenv
 playwright
 aiohttp
 jinja2
-imapclient 
-pyzmail36
 psycopg2-binary
 python-multipart

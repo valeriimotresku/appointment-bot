@@ -38,12 +38,13 @@ def deliver_code(email: str, code: str) -> bool:
         print("[WAITER] future already done")
         return False
 
-    # IMPORTANT:
-    # Future may belong to another thread/event loop.
-    loop.call_soon_threadsafe(
-        future.set_result,
-        code,
-    )
+    # Safe even if a future deployment calls this from another thread.
+    # Re-check done() inside the owner loop to avoid a timeout/set_result race.
+    def set_result_if_pending() -> None:
+        if not future.done():
+            future.set_result(code)
+
+    loop.call_soon_threadsafe(set_result_if_pending)
 
     print("[WAITER] code scheduled for delivery")
 
