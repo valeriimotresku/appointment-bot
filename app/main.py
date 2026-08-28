@@ -1,4 +1,8 @@
 # at the top of app/main.py
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import sys
 import asyncio
 

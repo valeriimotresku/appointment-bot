@@ -102,3 +102,5 @@ logs/
 # Pydantic / cache
 # --------------------------------------
 .pydantic_cache/
+
+.ssh
