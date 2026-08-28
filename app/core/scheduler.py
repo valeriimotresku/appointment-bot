@@ -102,7 +102,6 @@ def start_scheduler() -> None:
         "interval",
         seconds=CHECK_INTERVAL_SECONDS,
         jitter=CHECK_JITTER_SECONDS,
-        next_run_time=datetime.now(),
         coalesce=True,
         max_instances=1,
     )
