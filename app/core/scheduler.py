@@ -50,4 +50,4 @@ def start_scheduler():
     scheduler.add_job(check_all_sync, 'interval', seconds=30, 
                       next_run_time=datetime.now(), coalesce=True, max_instances=1)
     scheduler.start()
-    print("[Scheduler] Started successfully on Windows.")
+    print("[Scheduler] Started successfully.")
