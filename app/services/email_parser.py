@@ -1,21 +1,21 @@
 import re
 
-from fastapi import Request
+from starlette.datastructures import FormData
+
 
 EXPECTED_SENDER_DOMAIN = "frontdesksuite.com"
 EXPECTED_SUBJECT_PATTERN = r"Bestätigen.*Mail"
 
 
-async def parse_confirmation_email(
-    request: Request,
+def parse_confirmation_email(
+    form: FormData,
 ) -> tuple[str, str] | None:
+    """Parse a verified Mailgun inbound form and extract the confirmation code."""
 
-    form = await request.form()
-
-    sender = form.get("sender", "")
-    recipient = form.get("recipient", "")
-    subject = form.get("subject", "")
-    body = form.get("body-plain", "")
+    sender = str(form.get("sender", ""))
+    recipient = str(form.get("recipient", ""))
+    subject = str(form.get("subject", ""))
+    body = str(form.get("body-plain", ""))
 
     print(f"[Email] From: {sender}")
     print(f"[Email] To: {recipient}")
