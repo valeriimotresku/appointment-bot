@@ -1,5 +1,11 @@
 # Appointment Bot
 
+
+> [!IMPORTANT]
+> **Educational use only.** This project is provided solely for learning, research, and personal experimentation with FastAPI, Playwright, schedulers, webhooks, deployment, and browser automation. It is not intended for commercial use, abuse of third-party services, bypassing access controls, evading rate limits, gaining unfair priority, or violating any website's terms of service or applicable law.
+>
+> If you adapt this project, you are responsible for obtaining any required permission, respecting the target service's rules and technical limits, and ensuring that your use is lawful and does not interfere with other users or the service itself.
+
 A FastAPI + Playwright application that monitors appointment availability on FrontDeskSuite and automatically books matching appointments.
 
 The application runs continuously on a server, keeps one Chromium browser session alive, periodically refreshes the FrontDeskSuite date picker, and confirms bookings through a Mailgun email webhook.
@@ -519,6 +525,15 @@ systemctl show appointment-bot \
     -p MemoryPeak \
     -p CPUUsageNSec
 ```
+
+
+## Educational use and responsibility
+
+This repository is an educational demonstration of browser automation and backend integration. It is intended to illustrate concepts such as Playwright automation, asynchronous workflows, webhook verification, scheduling, authentication, and server deployment.
+
+The code is not provided as a general-purpose appointment-grabbing service and should not be used to circumvent booking rules, access restrictions, rate limits, anti-bot measures, or other safeguards. Before running it against any third-party service, review that service's terms and obtain permission where required.
+
+The author assumes no responsibility for misuse of the software or for consequences resulting from use that violates third-party rules or applicable law.
 
 ## Security notes
 
