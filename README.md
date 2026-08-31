@@ -421,7 +421,7 @@ Example:
 
 ```nginx
 server {
-    server_name terminbot.duckdns.org;
+    server_name subdomain.duckdns.org;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
