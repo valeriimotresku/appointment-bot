@@ -439,13 +439,13 @@ HTTPS is provided using Let's Encrypt / Certbot.
 Production URL:
 
 ```text
-https://terminbot.duckdns.org
+https://subdomain.duckdns.org
 ```
 
 Mailgun webhook:
 
 ```text
-https://terminbot.duckdns.org/email/incoming
+https://subdomain.duckdns.org/email/incoming
 ```
 
 ## Firewall
