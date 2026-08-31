@@ -33,7 +33,7 @@ The application runs continuously on a server, keeps one Chromium browser sessio
                          Internet
                             |
                             v
-                  https://terminbot.duckdns.org
+                  https://subdomain.duckdns.org
                             |
                             v
                           nginx
